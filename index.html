@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#000000"><meta name="author" content="William Lodge"><meta name="description" content="A practical GLM field guide to Zhipu and Z.ai models: coding, everyday use, local deployment, costs, prompts, troubleshooting, and 55 source entries."><meta property="og:title" content="GLM Field Guide — Zhipu and Z.ai Manual"><meta property="og:description" content="Coding, everyday work, and local deployment. A searchable, offline HTML field manual."><meta property="og:type" content="article"><title>GLM Field Guide — Zhipu and Z.ai Manual</title><style>
+  :root{
+    --bg:#fff;--fg:#111;--muted:#5b5b5b;--line:#d7d7d7;--soft:#f5f5f5;--hard:#000;
+    --max:1180px;--mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    --sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.62}
+  a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+  button,input{font:inherit}
+  .topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:2px solid #000}
+  .topbar-inner{max-width:var(--max);margin:auto;padding:.65rem 1rem;display:flex;gap:.7rem;align-items:center}
+  .brand{font-weight:900;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+  .search{flex:1;border:1px solid #000;padding:.58rem .7rem;background:#fff;color:#000}
+  .menu-btn{display:none;border:1px solid #000;background:#fff;padding:.5rem .7rem;font-weight:800}
+  .layout{max-width:var(--max);margin:auto;display:grid;grid-template-columns:270px minmax(0,1fr);gap:2.2rem;padding:1.6rem 1rem 5rem}
+  aside{position:sticky;top:68px;align-self:start;max-height:calc(100vh - 85px);overflow:auto;border-right:1px solid var(--line);padding-right:1.2rem}
+  aside nav a{display:block;padding:.34rem 0;text-decoration:none;font-size:.91rem}
+  aside nav a:hover{text-decoration:underline}
+  main{min-width:0}
+  .hero{border:3px solid #000;padding:2rem;margin-bottom:2rem}
+  .kicker{text-transform:uppercase;font-size:.78rem;font-weight:900;letter-spacing:.14em}
+  h1{font-size:clamp(2.1rem,6vw,4.5rem);line-height:.96;margin:.5rem 0 1rem;letter-spacing:-.04em}
+  .lead{font-size:1.12rem;max-width:810px}
+  .meta{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem}
+  .badge{display:inline-flex;border:1px solid #000;padding:.2rem .48rem;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;background:#fff}
+  .badge.stock{background:#fff}
+  .badge.adb{background:#efefef}
+  .badge.shizuku{background:#ddd}
+  .badge.root{background:#000;color:#fff}
+  .badge.danger{border-style:double;border-width:3px}
+  .vtag{display:inline-block;margin-left:.55rem;font-size:.66rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;border:1px solid #000;padding:.08rem .4rem;vertical-align:middle;white-space:nowrap}
+  .cite{font-size:.72em;font-weight:800;text-decoration:none;vertical-align:super;line-height:0}
+  .cite:hover{text-decoration:underline}
+  section{padding:1.8rem 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+  h2{font-size:clamp(1.55rem,4vw,2.2rem);line-height:1.1;margin:0 0 .85rem}
+  h3{font-size:1.2rem;margin:1.5rem 0 .5rem}
+  h4{margin:1.1rem 0 .4rem}
+  p{margin:.6rem 0 1rem}
+  ul,ol{padding-left:1.3rem}
+  li{margin:.3rem 0}
+  table{border-collapse:collapse;width:100%;margin:1rem 0;display:block;overflow:auto}
+  th,td{border:1px solid #aaa;padding:.55rem .65rem;vertical-align:top;text-align:left}
+  th{background:#f2f2f2}
+  code{font-family:var(--mono);font-size:.92em;background:#f2f2f2;padding:.08rem .22rem}
+  pre{position:relative;background:#050505;color:#f7f7f7;padding:1rem 3.4rem 1rem 1rem;overflow:auto;border:1px solid #000;line-height:1.48}
+  pre code{background:transparent;color:inherit;padding:0}
+  .copy{position:absolute;right:.45rem;top:.45rem;background:#fff;color:#000;border:1px solid #fff;padding:.25rem .42rem;font-size:.72rem;font-weight:800;cursor:pointer}
+  .callout{border-left:5px solid #000;background:var(--soft);padding:.85rem 1rem;margin:1rem 0}
+  .warning{border:2px solid #000;padding:.9rem 1rem;margin:1rem 0}
+  .warning strong:first-child{display:block;text-transform:uppercase;letter-spacing:.07em;font-size:.8rem;margin-bottom:.3rem}
+  .dangerbox{border:4px double #000;padding:1rem;margin:1rem 0}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .card{border:1px solid #aaa;padding:1rem}
+  .card h3,.card h4{margin-top:0}
+  details{border:1px solid #bbb;margin:.7rem 0}
+  summary{font-weight:800;cursor:pointer;padding:.7rem .8rem;background:#f7f7f7}
+  details>div{padding:.2rem .9rem .9rem}
+  .small{font-size:.88rem;color:var(--muted)}
+  .mono{font-family:var(--mono)}
+  .where{border:2px solid #000;padding:1rem;background:#fff}
+  .where pre{margin:.5rem 0 0}
+  .toc-title{font-weight:900;text-transform:uppercase;font-size:.76rem;letter-spacing:.12em;margin-bottom:.5rem}
+  .checklist li{list-style:"☐  "}
+  .good li{list-style:"✓  "}
+  .bad li{list-style:"×  "}
+  .source-list li{word-break:break-word}
+  .footer{border-top:3px solid #000;padding:2rem 1rem 4rem;max-width:var(--max);margin:auto}
+  .hidden-by-search{display:none!important}
+  @media(max-width:820px){
+    .layout{grid-template-columns:1fr}
+    aside{position:fixed;left:0;top:57px;bottom:0;width:min(88vw,330px);max-height:none;background:#fff;z-index:30;padding:1rem;border-right:2px solid #000;transform:translateX(-110%);transition:.2s}
+    aside.open{transform:translateX(0)}
+    .menu-btn{display:inline-block}
+    .grid{grid-template-columns:1fr}
+    .hero{padding:1.25rem}
+  }
+  @media print{
+    .topbar,aside,.copy{display:none!important}
+    .layout{display:block;max-width:none}
+    section{break-inside:avoid-page}
+    pre{white-space:pre-wrap;color:#000;background:#fff;border:1px solid #000}
+    a{text-decoration:none}
+  }
+
+  .skip-link{position:fixed;left:1rem;top:-100px;z-index:100;background:#000;color:#fff;padding:.75rem}
+  .skip-link:focus{top:1rem}
+  :focus-visible{outline:3px solid #111;outline-offset:3px}
+  [hidden]{display:none!important}
+  section,h3,li[id]{scroll-margin-top:90px}
+  .table-scroll{overflow:auto;max-width:100%;margin:1rem 0}
+  .table-scroll table{display:table;margin:0;min-width:520px}
+  .table-scroll td,.table-scroll th{overflow-wrap:anywhere}
+  .brand{white-space:normal;line-height:1.2}
+  .topbar-inner{flex-wrap:wrap}
+  .search{min-width:160px}
+  .status{font:700 .7rem var(--mono);border:1px solid #000;padding:.28rem .45rem;white-space:nowrap}
+  .hero-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+  .action{border:1px solid #000;background:#fff;color:#000;padding:.42rem .65rem;font-weight:800;font-size:.76rem;text-transform:uppercase;text-decoration:none;cursor:pointer}
+  .search-status{font-size:.88rem;max-width:var(--max);margin:0 auto;padding:0 1rem .5rem}
+  #no-results{border:2px solid #000;padding:1rem;margin:1rem 0}
+  .hero .small{margin-bottom:0}
+  aside a.active{font-weight:900;border-left:3px solid #000;padding-left:.6rem}
+  blockquote{position:relative;margin:1rem 0;padding:1.2rem 1rem 1rem;border-left:5px solid #000;background:var(--soft)}
+  blockquote p{padding-top:1.1rem;margin-bottom:0}
+  blockquote .copy{background:#000;color:#fff;min-height:32px}
+  .source-list li{margin:.75rem 0;overflow-wrap:anywhere}
+  .cite{font-size:.74em;line-height:inherit}
+  .badge.flagship{background:#000;color:#fff}
+  .menu-overlay{display:none}
+  @media(max-width:820px){
+    .topbar-inner{gap:.5rem;padding:.6rem 1rem}
+    .brand{font-size:.88rem;flex:1}
+    .status{font-size:.65rem}
+    .search{flex-basis:100%;width:100%;min-width:0}
+    aside{top:108px;max-height:calc(100dvh - 108px);width:min(88vw,330px)}
+    .layout{gap:0;padding-top:1rem}
+    .menu-btn{min-height:36px;min-width:38px;cursor:pointer}
+    .menu-overlay.open{display:block;position:fixed;inset:108px 0 0;background:#0005;z-index:25}
+    .hero{padding:1.2rem}
+    h1{font-size:clamp(2.8rem,12vw,4.5rem)}
+    section,h3,li[id]{scroll-margin-top:126px}
+    .table-scroll table{min-width:500px}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}aside{transition:none}}
+  @media print{
+    .hero-actions,.status,.search-status,.menu-overlay,.copy{display:none!important}
+    .hero{padding:1rem}
+    .hidden-by-search{display:block!important}
+    section{break-inside:auto}
+    h2,h3{break-after:avoid}
+    tr,blockquote{break-inside:avoid}
+    .table-scroll{overflow:visible} .table-scroll table{min-width:0;font-size:9pt}
+    .layout{padding:0}.footer{padding:1rem 0}
+  }
+</style></head>
+<body><a class="skip-link" href="#main">Skip to guide</a><header class="topbar"><div class="topbar-inner"><button type="button" class="menu-btn" id="menuBtn" aria-label="Toggle contents" aria-controls="sidebar" aria-expanded="false">☰</button><div class="brand">GLM Field Guide</div><input id="search" class="search" type="search" aria-label="Search guide" placeholder="Search guide: coding, local, pricing, reasoning…"><span class="status" id="online">OFFLINE READY</span></div><p class="search-status" id="searchStatus" role="status" aria-live="polite" hidden></p></header><div id="menuOverlay" class="menu-overlay" aria-hidden="true"></div>
+<div class="layout"><aside id="sidebar"><div class="toc-title">Field Manual</div><nav aria-label="Guide contents"><a href="#start">01 — Start here</a>
+<a href="#models">02 — Know your GLM model</a>
+<a href="#capability">03 — Capability and benchmarks</a>
+<a href="#community">04 — Community field reports</a>
+<a href="#access">05 — Choose an access route</a>
+<a href="#setup">06 — Setup and reasoning</a>
+<a href="#coding">07 — Coding workflows</a>
+<a href="#everyday">08 — Everyday use and research</a>
+<a href="#local">09 — Run GLM locally</a>
+<a href="#costs">10 — Costs and quotas</a>
+<a href="#privacy">11 — Privacy and licenses</a>
+<a href="#troubleshooting">12 — Troubleshooting and trial</a>
+<a href="#prompts">13 — Reusable prompts</a>
+<a href="#claims">14 — Claims to verify</a>
+<a href="#sources">15 — Sources and access notes</a></nav></aside><main id="main"><div class="hero" id="hero"><div class="kicker">Zhipu / Z.ai / Coding / Everyday work / Local models</div><h1>GLM Field Guide</h1><p class="lead">A practical manual for choosing a GLM model, getting useful work out of it, and knowing what the evidence actually supports. Coding workflows, general use, local hardware, API costs, community reports, and the configuration traps that matter.</p><div class="meta"><span class="badge flagship">GLM 5.3</span><span class="badge">5.3 Flash / FlashX</span><span class="badge">Research 2026-10-12</span><span class="badge">55 source entries</span><span class="badge">Single-file / Offline</span></div><div class="callout"><strong>Start here:</strong> trial Flash on bounded everyday and visual tasks; use flagship 5.3 for harder planning and debugging. Judge successful work, retries, and total cost. This is a research synthesis, not a benchmark performed by the author.</div><div class="hero-actions"><button class="action" id="printBtn" type="button">Print / Save PDF</button><a class="action" href="GLM_Field_Guide.md" download>Download Markdown</a><a class="action" href="#sources">Read the sources</a></div><p class="small">Save this HTML file to read it offline. Source links require an internet connection. Code and prompt blocks have copy buttons.</p></div><div id="no-results" role="status" hidden>No matching sections. Try a shorter search or clear the search field.</div><section id="start" data-search aria-labelledby="heading-start"><h2 id="heading-start">01 — How to use this guide</h2><p>GLM is worth testing as a lower-cost model family for software work and Chinese and English tasks. The strongest practical case is to start with GLM-5.3-Flash on bounded tasks, escalate difficult planning and debugging to GLM-5.3, and measure whether the savings survive retries and human corrections. This is a recommendation drawn from the evidence below, not a guarantee that GLM will outperform your current model.</p>
+<p>If you want to code, read sections 2 through 7 and the troubleshooting table. If you want a general assistant, read sections 2, 8, and 11. If you want to run it locally, start with section 9 before downloading anything. Section 12 provides a trial plan; section 13 contains reusable prompts. The source register explains exactly what was accessible.</p>
+<p>The main traps are choosing the wrong GLM variant, assuming a coding subscription is a general API allowance, mistaking advertised context size for reliable recall, and comparing results from different providers or agent tools as though the model were the only variable.</p>
+<h3>What the research can establish</h3>
+<p><strong>Documented fact</strong> means a specification, price, behavior, or policy stated by the relevant official source. <strong>Vendor claim</strong> means a capability or benchmark result reported by Z.ai. <strong>Firsthand report</strong> means a creator or user describes their own experience; the underlying work was not independently reproduced here. <strong>Recommendation</strong> means this guide&#39;s suggested practice.</p>
+<p>The research sampled official documentation and model cards; Reddit; YouTube captions and creator write-ups; Chinese discussions on LINUX DO and V2EX; Bilibili descriptions; indexed Zhihu material; public Weibo posts; Hacker News; and deployment documentation. This is a targeted public-web research pass, not an exhaustive scrape or a representative survey. Chinese passages are paraphrased into English. Upvotes, view counts, and repeated launch announcements were not treated as performance measurements.</p>
+<p>YouTube access was uneven: the full auto-generated transcript of Claire Vo&#39;s review was retrieved and read; several newer videos had no retrievable transcript. Their titles, descriptions, or translated reposts are labeled accordingly. Xiaohongshu and WeChat searches did not produce sufficiently accessible material for substantive conclusions. No private groups, login walls, or paid material were accessed.</p>
+</section>
+<section id="models" data-search aria-labelledby="heading-models"><h2 id="heading-models">02 — Know which GLM you are using</h2><p>GLM denotes Zhipu/Z.ai&#39;s model family. A model is the component generating responses. Z.ai&#39;s chat product, a coding agent, an inference provider, and the GLM Coding Plan are different layers. A capable model can still perform poorly when its tool integration, serving system, or supplied context fails. Z.ai&#39;s official organization links its GLM families and related projects. <a class="cite" href="#src-S01" aria-label="Source S01">[S01]</a></p>
+<h3>Current model map</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Documented input and context</th>
+<th>Practical starting role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GLM-5.3</td>
+<td>Text; 1M context; up to 128K output</td>
+<td>Complex planning, debugging, code review, and long software tasks</td>
+</tr>
+<tr>
+<td>GLM-5.3-Flash</td>
+<td>Text, image, video, file inputs; 1M context; up to 128K output; text output</td>
+<td>Routine work, visual coding, document understanding, cost-sensitive agents</td>
+</tr>
+<tr>
+<td>GLM-5.3-FlashX</td>
+<td>Flash-family multimodal model; 1M context</td>
+<td>Trial when hosted response speed is worth a higher API price</td>
+</tr>
+<tr>
+<td>GLM-5.2</td>
+<td>Text; 1M context</td>
+<td>Historical comparison or a specifically pinned provider deployment</td>
+</tr>
+<tr>
+<td>GLM-5.1 and GLM-5</td>
+<td>200K context in the official overview</td>
+<td>Older workflows and reports; verify actual serving behavior</td>
+</tr>
+<tr>
+<td>GLM-4.7 and GLM-4.6</td>
+<td>200K context in the official overview</td>
+<td>Earlier generations, not the present flagship</td>
+</tr>
+<tr>
+<td>GLM-4.7-Flash</td>
+<td>30B total, 3B active MoE; text model</td>
+<td>A more realistic starting point for smaller local hardware</td>
+</tr>
+</tbody></table></div>
+<p>Specifications are documented; the suggested roles are editorial recommendations. Sources: <a class="cite" href="#src-S02" aria-label="Source S02">[S02]</a>, <a class="cite" href="#src-S03" aria-label="Source S03">[S03]</a>, <a class="cite" href="#src-S04" aria-label="Source S04">[S04]</a>, <a class="cite" href="#src-S07" aria-label="Source S07">[S07]</a>.</p>
+<p><strong>GLM-5.3-Flash is a separate multimodal architecture, not simply flagship 5.3 with a speed switch.</strong> Z.ai reports 320B total and 18B active parameters for Flash, with hybrid sparse and linear attention and a newly trained base. Flagship 5.3 retains the 5.2 base and improves through post-training. Flash&#39;s active count describes computation per token; it does not mean only 18B parameters need to fit in memory. <a class="cite" href="#src-S05" aria-label="Source S05">[S05]</a>, <a class="cite" href="#src-S06" aria-label="Source S06">[S06]</a></p>
+<p>There is a parameter-count discrepancy worth preserving: the flagship Hugging Face listing and Artificial Analysis report roughly 753B, while Unsloth describes 744B with 40B active. Treat it as a roughly 750B-class model and plan from the actual checkpoint file sizes. This guide does not resolve the counting convention. <a class="cite" href="#src-S06" aria-label="Source S06">[S06]</a>, <a class="cite" href="#src-S23" aria-label="Source S23">[S23]</a>, <a class="cite" href="#src-S30" aria-label="Source S30">[S30]</a></p>
+<h3>Names that can mislead you</h3>
+<p>Do not assume every model with Flash in its name is free, small, or interchangeable. GLM-4.7-Flash and GLM-5.3-Flash occupy very different hardware classes. The current official pricing page lists the former as free and the latter as paid. <a class="cite" href="#src-S07" aria-label="Source S07">[S07]</a>, <a class="cite" href="#src-S08" aria-label="Source S08">[S08]</a></p>
+<p>On the current Coding Plan, Z.ai documents automatic routing from 5.1/5.2 requests to 5.3, and from 4.7 to 5.3-Flash. That behavior is specific to the plan; do not extrapolate it to every provider. Record the requested identifier and the returned metadata. Asking the model its name is not reliable verification. <a class="cite" href="#src-S09" aria-label="Source S09">[S09]</a></p>
+<p>Specialist names such as GLM-OCR, GLM-Image, GLM-ASR, and the GLM-V family refer to other capabilities. A text-only flagship does not automatically gain image input because the broader family contains vision models. <a class="cite" href="#src-S01" aria-label="Source S01">[S01]</a></p>
+</section>
+<section id="capability" data-search aria-labelledby="heading-capability"><h2 id="heading-capability">03 — What the evidence says about capability</h2><h3>Official benchmark claims</h3>
+<p>Z.ai reports substantial improvements over 5.2. The following numbers are useful evidence of progress under its evaluated conditions, not expected success rates on your own projects.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Benchmark as reported by Z.ai</th>
+<th>GLM-5.2</th>
+<th>GLM-5.3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Terminal Bench 3.0</td>
+<td>4.6</td>
+<td>28.3</td>
+</tr>
+<tr>
+<td>DeepSWE v1.1</td>
+<td>46.2</td>
+<td>66.9</td>
+</tr>
+<tr>
+<td>Agents Last Exam CLI</td>
+<td>23.8</td>
+<td>28.5</td>
+</tr>
+<tr>
+<td>CyberGym</td>
+<td>77.2</td>
+<td>84.5</td>
+</tr>
+</tbody></table></div>
+<p>The frequently repeated 50% coding improvement is attached to Z.ai&#39;s own Code Bench. The reported max-effort scores are 23.4% for 5.2 and 34.5% for 5.3, a relative gain of about 47%, rounded in the headline. It is not a promise of 50% better code on every task. Benchmark table: <a class="cite" href="#src-S55" aria-label="Source S55">[S55]</a>. Code Bench figures: <a class="cite" href="#src-S03" aria-label="Source S03">[S03]</a>.</p>
+<p>The model card&#39;s footnotes matter: examples include long time budgets, specific coding-agent versions, multiple rollouts, and task-specific context settings. A ten-minute interactive session and a benchmark run with hours of execution are different experiments. <a class="cite" href="#src-S06" aria-label="Source S06">[S06]</a></p>
+<h3>Independent and commercially interested evaluations</h3>
+<p>Artificial Analysis provides a useful external checkpoint. Its currently retrieved pages report Intelligence Index values of 45 for flagship 5.3 Max and 42 for Flash. These differ from launch-era scores circulated in posts and vendor pages. Compare the same index version and reasoning setting before interpreting a numerical change as a regression. Its reported time per task also shows why decoding speed alone is an incomplete buying metric. <a class="cite" href="#src-S30" aria-label="Source S30">[S30]</a>, <a class="cite" href="#src-S31" aria-label="Source S31">[S31]</a></p>
+<p>The Chinese ReLE evaluation published by NoneLinear reports Flash at 74.2% overall over roughly 15,000 questions, with 64.7% in coding and 61.6% in agent/tool use. It reports an average 128 seconds per call. In its comparison with 4.7-Flash, coding improved sharply while the agent/tool category slipped slightly. NoneLinear also sells API services, so this is a disclosed commercial source, not a neutral certification. The score does not establish suitability for professional medical, legal, or financial decisions. <a class="cite" href="#src-S32" aria-label="Source S32">[S32]</a></p>
+<p>Anthropic&#39;s September 29 assessment independently tests GLM-5.3&#39;s advanced cyber capabilities and finds meaningful exploit-development ability. Anthropic is a competitor; its findings are evidence about that tested capability, not an endorsement of general coding quality. For ordinary users, the practical relevance is a potentially useful defensive code-review model, with findings requiring reproduction and expert triage. <a class="cite" href="#src-S45" aria-label="Source S45">[S45]</a></p>
+<h3>Where the practical case is strongest</h3>
+<p>The sampled evidence supports trials for repository orientation, bounded feature implementation, debugging with observable failures, UI iteration, bilingual text work, and document extraction. It provides less certainty about fully autonomous delivery across large, changing systems. This distinction follows from the specific successes and failures reported below; it is not a quantified ranking.</p>
+<p>A model can produce an attractive page with incorrect business logic. It can produce an insightful bug-fix plan without validating a fix. It can identify a vulnerability without demonstrating a real security impact. Evaluate the final behavior appropriate to the task.</p>
+</section>
+<section id="community" data-search aria-labelledby="heading-community"><h2 id="heading-community">04 — What Reddit YouTube and Chinese communities report</h2><h3>Reddit</h3>
+<p>A recent r/ZaiGLM post describes using 5.3-Flash across projects totaling millions of lines, with strong repository exploration and implementation. The author reports using max effort. Comments describe benefit from a follow-up review pass and differing model preferences. The company, repository, and success criteria are not independently verified here. <a class="cite" href="#src-S33" aria-label="Source S33">[S33]</a></p>
+<p>A contemporaneous complaint reports repeated repair attempts, forgotten instructions, and lower speed on a Z.ai Max subscription. Other commenters disagree or use different providers. That establishes conflicting user experience, not proof that Z.ai secretly changed weights or that a model-wide regression occurred. <a class="cite" href="#src-S34" aria-label="Source S34">[S34]</a></p>
+<p>LocalLLaMA&#39;s August 29 thread documents early Flash runtime friction: some users saw very long prompt-processing delays or incorrect tool calls, while others reported workable configurations. Hardware, quantization, and engine branches differed. Those launch-period reports should not be treated as October performance specifications. <a class="cite" href="#src-S35" aria-label="Source S35">[S35]</a></p>
+<p>An earlier March comparison favored GLM-5 on a small real-time chat application, while a separate March thread strongly criticized Coding Plan service quality. Both are historical context for why provider and task choice matter; neither determines the quality of 5.3 today. <a class="cite" href="#src-S46" aria-label="Source S46">[S46]</a>, <a class="cite" href="#src-S47" aria-label="Source S47">[S47]</a></p>
+<h3>YouTube and creator evidence</h3>
+<p>Claire Vo&#39;s June 24 GLM-5.2 review is unusually useful because it uses her existing ChatPRD codebase. The retrieved transcript and creator article describe a repository audit, UI redesign, and approximately 45-minute error investigation. She reports $3.36 for roughly six million tokens with a 72% cache rate. TypeScript/React implementation stumbled before recovery; the final triage plan was useful. This is a 5.2 case study through her provider, not a current 5.3 price prediction. Relevant video sections: 11:04 repository work, 16:37 redesign, 20:57 autonomous work, 22:35 difficulties, and 25:23 cost. <a class="cite" href="#src-S36" aria-label="Source S36">[S36]</a>, <a class="cite" href="#src-S37" aria-label="Source S37">[S37]</a></p>
+<p>For local deployment, Jose Romero publishes a detailed creator write-up linked to a video and output logs. On his 128GB Strix Halo setup, the tested 1-bit Flash branch ran around 9.2-9.6 tokens per second at low effort. A generated dashboard failed because of a JavaScript name collision, then worked after a manual rename. This illustrates why loading a model, generating plausible code, and shipping working output are separate milestones. It is one configuration, not a universal speed estimate. <a class="cite" href="#src-S38" aria-label="Source S38">[S38]</a></p>
+<p>Bijan Bowen&#39;s August flagship review covers games, a website, CAD, and a difficult hardware task. Its Bilibili repost supplies chapters and the original YouTube link, but the original transcript was not retrievable. Treat the repost&#39;s characterization of successes and failures as secondary reporting; this guide does not independently score the footage. <a class="cite" href="#src-S40" aria-label="Source S40">[S40]</a>, <a class="cite" href="#src-S41" aria-label="Source S41">[S41]</a></p>
+<h3>Chinese forums and social media</h3>
+<p>On August 14, a LINUX DO user reported that 5.3 at max effort found a core bug in a custom computer-vision training workflow in about 40 minutes, after other attempts missed it. The same user reported useful review of a large C++ project. This is a concrete firsthand success report, though the complete code and reproduction are unavailable. <a class="cite" href="#src-S39" aria-label="Source S39">[S39]</a></p>
+<p>Another August 14 LINUX DO post praises front-end visuals and animation while criticizing code correctness and rework. Other replies disagree about business-code quality. The useful operational lesson is to test state changes and logic separately from appearance. <a class="cite" href="#src-S42" aria-label="Source S42">[S42]</a></p>
+<p>The October 1 Flash discussion includes reports of invented URLs or paths, long-context confusion, and slow service, alongside users finding it adequate or useful with review. An October 5 thread alleges diminished quality and different behavior between tools; it also contains positive replies. The allegations do not establish hidden model substitution, deliberate degradation, or a quantified failure rate. <a class="cite" href="#src-S43" aria-label="Source S43">[S43]</a>, <a class="cite" href="#src-S44" aria-label="Source S44">[S44]</a></p>
+<p>V2EX&#39;s August 14 subscription thread includes timeouts and latency complaints, a Max user reporting usable service, and a user finding ZCode faster than their other integration. Plan tier and tool choice appear in the reports; their causal contribution has not been isolated. <a class="cite" href="#src-S48" aria-label="Source S48">[S48]</a></p>
+<p>A native Bilibili Flash review explicitly calls its three-direction trial subjective rather than rigorous. That admission is useful: a demo can reveal behavior without proving superiority. Chinese reposts of Western videos are not independent confirmation. <a class="cite" href="#src-S49" aria-label="Source S49">[S49]</a></p>
+<p>The indexed Zhihu launch post emphasizes benchmark standings and accessibility. It was only partially accessible, so it contributes launch framing rather than independently verified experience. Public Weibo material similarly emphasizes FlashX speed and low cost. One inspected post contains pricing figures that do not match the international official USD table; they are not used in this guide&#39;s calculations. <a class="cite" href="#src-S50" aria-label="Source S50">[S50]</a>, <a class="cite" href="#src-S51" aria-label="Source S51">[S51]</a></p>
+<h3>Interpreting Chinese discussion terms</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Practical translation</th>
+<th>What it does not establish</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>降智</td>
+<td>Perceived loss of intelligence or quality</td>
+<td>Proven weight changes or deliberate throttling</td>
+</tr>
+<tr>
+<td>满血</td>
+<td>Full-strength or fully provisioned version</td>
+<td>A verified checkpoint or precision level</td>
+</tr>
+<tr>
+<td>套壳</td>
+<td>A wrapper around another service or model</td>
+<td>That every wrapper degrades quality</td>
+</tr>
+<tr>
+<td>跑分</td>
+<td>Benchmark scores</td>
+<td>Real-world task completion</td>
+</tr>
+<tr>
+<td>幻觉</td>
+<td>Hallucination or invented information</td>
+<td>A measured hallucination rate</td>
+</tr>
+<tr>
+<td>前端王朝</td>
+<td>Hyperbolic praise for front-end capability</td>
+<td>Correct application logic</td>
+</tr>
+</tbody></table></div>
+<p>These translations explain the sampled discussions. They are not technical specifications or a sentiment survey.</p>
+</section>
+<section id="access" data-search aria-labelledby="heading-access"><h2 id="heading-access">05 — Choose an access route</h2><h3>Chat for ordinary use</h3>
+<p>Use the official chat entry point for a low-friction trial of writing, summarization, and conversation. Inspect the model selector and available tools rather than assuming the chat product exposes every API capability. The official model README links the Z.ai chat surface. <a class="cite" href="#src-S07" aria-label="Source S07">[S07]</a></p>
+<h3>Coding Plan for supported agent tools</h3>
+<p>The plan is a subscription used within the officially listed tools. It is not unrestricted backend API credit. Current documentation supports 5.3 and Flash across tiers, shared quotas across tools, and separate five-hour and weekly limits. The FAQ says plan calls do not automatically draw down account balance after exhaustion. <a class="cite" href="#src-S10" aria-label="Source S10">[S10]</a></p>
+<p>Officially listed environments include ZCode, Claude Code, OpenCode, Cline, Cursor, Kilo Code, and several general agent tools. General-agent service is described as best effort under high load. Consult the current integration guide for your exact tool. <a class="cite" href="#src-S12" aria-label="Source S12">[S12]</a></p>
+<h3>Standard API or a third-party hosted model</h3>
+<p>A standard API route is appropriate for an application you are building, predictable per-token accounting, or a controlled comparison. A third-party provider can expose the same weights with different precision, context limits, routing, and retention rules. Record those details; a model name alone is insufficient. These are evaluation criteria, not recommendations to buy a particular provider.</p>
+<p>There is a documentation inconsistency: the 5.3 model page&#39;s protocol table shows the coding Chat Completions base, while its standard call example uses the regular API path. It also describes an account-history restriction for prior Coding Plan subscribers. The tool guide and switching guide advertise multiple protocols. The safe interpretation is to use the current guide for your account and tool, then verify a minimal successful call and its billing. Do not assume a standard API route is available just because the URL is documented. <a class="cite" href="#src-S03" aria-label="Source S03">[S03]</a>, <a class="cite" href="#src-S12" aria-label="Source S12">[S12]</a></p>
+<h3>Local deployment</h3>
+<p>Local weights provide more control over inference and data flow, but you must operate the runtime, memory, tools, and updates yourself. A local model used with cloud search, remote tools, or external telemetry does not make the whole workflow local. Section 9 explains the realistic hardware choices.</p>
+</section>
+<section id="setup" data-search aria-labelledby="heading-setup"><h2 id="heading-setup">06 — Setup recipes and reasoning settings</h2><h3>Match the key endpoint and protocol</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Intended route</th>
+<th>Documented base URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Standard Chat Completions example</td>
+<td><a href="https://api.z.ai/api/paas/v4">https://api.z.ai/api/paas/v4</a></td>
+</tr>
+<tr>
+<td>Coding Plan Chat Completions</td>
+<td><a href="https://api.z.ai/api/coding/paas/v4">https://api.z.ai/api/coding/paas/v4</a></td>
+</tr>
+<tr>
+<td>Anthropic-compatible agent integration</td>
+<td><a href="https://api.z.ai/api/anthropic">https://api.z.ai/api/anthropic</a></td>
+</tr>
+<tr>
+<td>Responses-compatible tool integration</td>
+<td><a href="https://api.z.ai/api/v1">https://api.z.ai/api/v1</a></td>
+</tr>
+</tbody></table></div>
+<p>These are base URLs, not interchangeable complete request URLs. Use a Z.ai key for the Z.ai endpoint, a provider key for that provider&#39;s endpoint, and the model identifier accepted by that route. Standard and Coding Plan entitlement are different. <a class="cite" href="#src-S03" aria-label="Source S03">[S03]</a>, <a class="cite" href="#src-S12" aria-label="Source S12">[S12]</a></p>
+<h3>A minimal direct API example</h3>
+<p>The following is an illustrative standard-API request for an eligible account. It was not executed here. Install <code>requests</code> in your own environment and supply an existing Z.ai key through <code>ZAI_API_KEY</code>. The example uses no OpenAI credential.</p>
+<pre><code class="language-python">import os
+import requests
+
+payload = {
+    &quot;model&quot;: &quot;glm-5.3-flash&quot;,
+    &quot;messages&quot;: [{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Summarize this task in three steps: audit a small codebase.&quot;
+    }],
+    &quot;thinking&quot;: {&quot;type&quot;: &quot;enabled&quot;},
+    &quot;reasoning_effort&quot;: &quot;low&quot;,
+    &quot;max_tokens&quot;: 4096
+}
+
+response = requests.post(
+    &quot;https://api.z.ai/api/paas/v4/chat/completions&quot;,
+    headers={&quot;Authorization&quot;: &quot;Bearer &quot; + os.environ[&quot;ZAI_API_KEY&quot;]},
+    json=payload,
+    timeout=180
+)
+response.raise_for_status()
+data = response.json()
+print(data[&quot;choices&quot;][0][&quot;message&quot;].get(&quot;content&quot;, &quot;&quot;))
+print(data.get(&quot;usage&quot;, {}))
+</code></pre>
+<p>Start with a minimal request, then add images, structured output, streaming, or tools individually. The 4,096-token cap keeps this example bounded; it is not a recommended budget for hard reasoning. A response that spends its budget reasoning may return little final text. Documented HTTP and reasoning patterns: <a class="cite" href="#src-S56" aria-label="Source S56">[S56]</a>, <a class="cite" href="#src-S14" aria-label="Source S14">[S14]</a>.</p>
+<h3>Coding-agent checklist</h3>
+<ol>
+<li>Configure one supported tool using its current official guide.</li>
+<li>Set the correct endpoint and explicit current model ID.</li>
+<li>Enable image input for Flash when the tool supports it; disable it for text-only 5.3.</li>
+<li>Confirm a short read-only task works before granting file edits.</li>
+<li>Confirm a real file read, a small edit, and a test invocation in a disposable project.</li>
+<li>Check model metadata, usage, and the applicable quota dashboard.</li>
+</ol>
+<p>The current switching guide documents 1M settings, the <code>[1m]</code> suffix for its Claude Code integration, and separate effort mappings for tools. Those details are tool-specific. Do not append <code>[1m]</code> to an arbitrary API model ID. Some examples on the older integration page still mention 5.2 and 200K assumptions; use the newer switching guidance for 5.3/Flash. <a class="cite" href="#src-S13" aria-label="Source S13">[S13]</a></p>
+<h3>Set reasoning deliberately</h3>
+<p>GLM-5.3 and Flash require thinking. Direct API requests support <code>low</code>, <code>high</code>, and <code>max</code>; max is the documented default. Trying <code>thinking.type: disabled</code> can fail on the direct API. The Coding Plan adapters map some tool-specific values to supported effort levels, so a tool toggle may mean low reasoning rather than no reasoning. <a class="cite" href="#src-S14" aria-label="Source S14">[S14]</a></p>
+<p>Recommended starting points: low for quick extraction and drafting; high for routine engineering; max for hard debugging, ambiguous requirements, or a difficult final review. Escalate when a cheaper setting fails an objective check. A bigger effort setting can improve reasoning but also increase latency and output usage; it cannot repair missing evidence or unavailable tools.</p>
+<h3>Preserve thinking when the workflow needs it</h3>
+<p>For agent/tool chains, Z.ai recommends returning the full, unmodified <code>reasoning_content</code> when preserved thinking is enabled with <code>clear_thinking: false</code>. The Coding Plan and standard API have different documented defaults. The local model cards recommend clearing previous thinking for ordinary chat. These are different scenarios, not one universal toggle. <a class="cite" href="#src-S15" aria-label="Source S15">[S15]</a>, <a class="cite" href="#src-S05" aria-label="Source S05">[S05]</a></p>
+<p>A custom agent should preserve protocol fields and tool-call IDs correctly. A regular chat user usually benefits more from a concise task summary than from carrying an entire old reasoning history into every new topic.</p>
+</section>
+<section id="coding" data-search aria-labelledby="heading-coding"><h2 id="heading-coding">07 — Coding workflow that makes results reviewable</h2><p>The recommended loop is to inspect the repository, establish an observable target, implement one bounded change, run meaningful checks, inspect the diff, and produce a short handover. Use the prompts in section 13. These are engineering practices suggested by the reported failure modes, not proprietary GLM tricks.</p>
+<h3>Repository work</h3>
+<p>Ask for the entry points, relevant files, current conventions, and the existing test path before implementation. Require references to files actually read. For a bug, provide the failing behavior, smallest reproduction, logs, expected behavior, and environment. Request a test that fails before the fix and passes afterward where practical.</p>
+<p>For larger changes, have 5.3 produce a plan identifying dependencies and failure cases. Let Flash implement a bounded milestone. Then review the actual diff and test results. Switching models can help expose blind spots; it is not independent verification by itself.</p>
+<h3>Front-end and visual work</h3>
+<p>For screenshot-led work, Flash&#39;s native vision is the relevant choice. Give reference images, viewport sizes, required interactions, and the existing design system. Require the agent to run the app and inspect screenshots if its environment provides a browser. A text response claiming that it rendered a page is not proof of visual inspection. <a class="cite" href="#src-S04" aria-label="Source S04">[S04]</a></p>
+<p>Verify keyboard use, empty and error states, saving and reload behavior, and actual data changes. In a dashboard, recalculate totals from the input. In a chat app, test delivery, reconnect behavior, and duplicate messages. These checks are more useful than a generic instruction to make the output production ready.</p>
+<h3>Long tasks</h3>
+<p>Maintain a small task note with the goal, verified facts, decisions, current files, passing checks, and next action. Refresh it at milestones. Start a fresh session when the agent repeatedly contradicts known facts or reopens settled decisions. No researched source establishes a universal safe context threshold; the often mentioned 100K or 250K breakpoints are individual reports.</p>
+<p>For repeated failure, stop asking for the same repair. Ask the agent to isolate the first failing assumption or run a smaller diagnostic. If it cannot do so, switch model or perform the check yourself. Cheap repetitions that never reach a working result are expensive in practice.</p>
+<h3>Tool calling is a software contract</h3>
+<p>The API emits a requested function name, JSON arguments, and a call ID; the application executes the function and returns its result. Tool access comes from the surrounding application. The documentation currently specifies <code>tool_choice: auto</code>. Do not assume every parameter from another provider is supported. <a class="cite" href="#src-S16" aria-label="Source S16">[S16]</a></p>
+<p>If building your own agent, validate arguments, expose small clear tools, return concise error messages, and record outcomes. Test that a file edit actually happened and that a failed tool call is not presented as success.</p>
+</section>
+<section id="everyday" data-search aria-labelledby="heading-everyday"><h2 id="heading-everyday">08 — Everyday use and research</h2><h3>Writing summarization and translation</h3>
+<p>Begin with a small representative sample: an English document, a Chinese document, and something mixing the two. Supply the audience, tone, terms that must stay consistent, and required output shape. For translation, define whether you want literal accuracy, natural phrasing, or bilingual comparison. Keep names, quantities, and dates on an explicit verification list.</p>
+<p>For summaries, ask for claims with page or paragraph references, missing information, and conflicting passages. For extraction, define fields and allow <code>null</code> when a value is absent. A refusal to fill a missing field is preferable to a plausible invented value.</p>
+<h3>Research requires actual retrieval</h3>
+<p>An LLM&#39;s knowledge is not a live search engine. Give it a search or reader tool, or provide the source documents yourself. Z.ai documents Web Search separately and lists search/reader MCP access for the Coding Plan. Check that the selected interface really exposes those tools. <a class="cite" href="#src-S02" aria-label="Source S02">[S02]</a>, <a class="cite" href="#src-S10" aria-label="Source S10">[S10]</a></p>
+<p>Require a claim-to-source table, publication dates, and a distinction between a full page read and a search snippet. Check a sample of links and quoted figures yourself. A bibliography full of plausible URLs can still be fabricated. The October LINUX DO reports make invented links a concrete failure to test, without establishing how frequently it occurs. <a class="cite" href="#src-S43" aria-label="Source S43">[S43]</a></p>
+<h3>Images documents and office files</h3>
+<p>Flash can accept multimodal input, but its output modality is text. Creating a PDF, spreadsheet, presentation, video edit, or Blender project depends on tools that execute instructions and save artifacts. Native vision does not itself supply those tools. Test the exact input type supported by your chosen interface. Model and request formats: <a class="cite" href="#src-S05" aria-label="Source S05">[S05]</a>, <a class="cite" href="#src-S57" aria-label="Source S57">[S57]</a>.</p>
+<p>For a spreadsheet, request formulas and reconciled totals. For a presentation, specify audience and narrative before design. For OCR, compare extracted values against the image, especially names and decimals. For a report, open the file and inspect page layout. A successful chat reply does not establish a usable saved deliverable.</p>
+<h3>Structured output</h3>
+<p>The documented JSON mode uses <code>response_format: {&quot;type&quot;: &quot;json_object&quot;}</code> and instructions describing the expected fields. Valid JSON is not proof that every field has the right type or true content. Validate required keys, enums, ranges, and source references in your application. The documentation&#39;s examples do not justify assuming universal strict JSON Schema compatibility across providers. <a class="cite" href="#src-S17" aria-label="Source S17">[S17]</a></p>
+</section>
+<section id="local" data-search aria-labelledby="heading-local"><h2 id="heading-local">09 — Running GLM locally</h2><h3>Decide from memory before model reputation</h3>
+<p>For a conventional laptop or a single modest GPU, start by evaluating GLM-4.7-Flash or another model that fits. The flagship is a large-memory project. Even 5.3-Flash belongs in a very different class from a 30B model. Open weights mean available weights, not inexpensive hardware or easy deployment. <a class="cite" href="#src-S07" aria-label="Source S07">[S07]</a>, <a class="cite" href="#src-S23" aria-label="Source S23">[S23]</a>, <a class="cite" href="#src-S24" aria-label="Source S24">[S24]</a></p>
+<p>The following is Unsloth&#39;s published planning guidance, not measured on your machine. Memory can mean RAM plus VRAM or unified memory; adding them gives capacity, not GPU-speed performance.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Model and quantization</th>
+<th>Published approximate memory guidance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5.3-Flash 1-bit</td>
+<td>About 100GB; introductory guidance also says 102GB</td>
+</tr>
+<tr>
+<td>5.3-Flash 2-bit</td>
+<td>About 115GB</td>
+</tr>
+<tr>
+<td>5.3-Flash 3-bit</td>
+<td>128-150GB</td>
+</tr>
+<tr>
+<td>5.3-Flash 4-bit</td>
+<td>162-210GB</td>
+</tr>
+<tr>
+<td>5.3-Flash BF16</td>
+<td>About 650GB</td>
+</tr>
+<tr>
+<td>Flagship 5.3 1-bit</td>
+<td>About 223GB</td>
+</tr>
+<tr>
+<td>Flagship 5.3 2-bit</td>
+<td>About 245GB; 256GB-class devices discussed</td>
+</tr>
+<tr>
+<td>Flagship 5.3 4-bit</td>
+<td>372-475GB</td>
+</tr>
+</tbody></table></div>
+<p>Sources: <a class="cite" href="#src-S23" aria-label="Source S23">[S23]</a>, <a class="cite" href="#src-S24" aria-label="Source S24">[S24]</a>. Reserve room for the operating system, inference state, vision components, longer context, and other applications. Start with a short context. Fitting the weights does not establish that 1M tokens will fit or run acceptably.</p>
+<h3>Quantization choices</h3>
+<p>Quantization reduces weight precision and file size. It can also change quality. Unsloth reports token-level top-1 agreement/accuracy statistics for its quants; those are not the percentage of software tasks successfully completed. Its Flash guide even presents different headline and detailed percentages for some settings. Prefer the exact named quant, file size, current detailed table, and your own downstream tests rather than repeating a single promotional retention number. <a class="cite" href="#src-S24" aria-label="Source S24">[S24]</a></p>
+<p>As a planning estimate, 30B parameters at four bits occupy about 15GB of raw weight values before metadata, unquantized tensors, and runtime overhead. That arithmetic is not a promise that 4.7-Flash will fit on a 16GB GPU. Check the exact file and leave headroom. A 24GB-class GPU is a more comfortable candidate to trial a suitable quant, but context and offload settings still matter.</p>
+<h3>Choose a runtime that supports the architecture</h3>
+<p>Official model cards point to SGLang, vLLM, Transformers, KTransformers, and other deployment routes. Use the model&#39;s linked recipe, not only an automatically generated one-line launch command. Correct reasoning and tool parsers are essential for coding agents. <a class="cite" href="#src-S05" aria-label="Source S05">[S05]</a>, <a class="cite" href="#src-S06" aria-label="Source S06">[S06]</a></p>
+<p>Unsloth&#39;s current Flash guide points to a specific llama.cpp branch and documents September 4 optimizations. Do not assume that an old stable engine supports a new hybrid architecture. Check whether the relevant support has since merged before building a special branch. Record the engine commit, backend, quant, template, context, and speculative-decoding settings. <a class="cite" href="#src-S24" aria-label="Source S24">[S24]</a></p>
+<h3>First local run</h3>
+<ol>
+<li>Choose the exact checkpoint and quant from the publisher&#39;s current instructions.</li>
+<li>Check usable memory and free disk space; a download may need temporary space too.</li>
+<li>Install a supported runtime using its official instructions.</li>
+<li>Start with a small context and low reasoning to confirm basic loading and output.</li>
+<li>Test a factual extraction, a code task, and a real tool-call round trip separately.</li>
+<li>For Flash vision, confirm the image component is present and test one image.</li>
+<li>Increase context or effort one setting at a time and record memory and elapsed time.</li>
+</ol>
+<p>Measure model load time, prompt-processing time, first-answer latency, generation speed, peak memory, and successful task completion. A model producing 10 tokens per second can still be usable for offline work; it may be frustrating for interactive editing. The acceptable threshold depends on your workload.</p>
+<h3>Local economics</h3>
+<p>Use <code>monthly equipment cost + power + administration</code> as the fixed cost, then compare it with the API cost of the same successful work. If API usage costs $20 a month and hardware amortization alone costs $100 a month, local is not the cheaper option on that workload. Local may still be worthwhile for data control, learning, customization, or unreliable connectivity. These are hypothetical figures, not hardware price quotes.</p>
+</section>
+<section id="costs" data-search aria-labelledby="heading-costs"><h2 id="heading-costs">10 — Costs quotas and practical budgeting</h2><h3>Standard API snapshot</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Input per 1M tokens</th>
+<th>Cached input per 1M</th>
+<th>Output per 1M</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5.3-Flash</td>
+<td>$0.15</td>
+<td>$0.03</td>
+<td>$0.50</td>
+</tr>
+<tr>
+<td>5.3-FlashX</td>
+<td>$0.37</td>
+<td>$0.075</td>
+<td>$1.25</td>
+</tr>
+<tr>
+<td>5.3</td>
+<td>$1.40</td>
+<td>$0.26</td>
+<td>$4.40</td>
+</tr>
+<tr>
+<td>5.2 and 5.1</td>
+<td>$1.40</td>
+<td>$0.26</td>
+<td>$4.40</td>
+</tr>
+<tr>
+<td>5</td>
+<td>$1.00</td>
+<td>$0.20</td>
+<td>$3.20</td>
+</tr>
+<tr>
+<td>4.7</td>
+<td>$0.60</td>
+<td>$0.11</td>
+<td>$2.20</td>
+</tr>
+</tbody></table></div>
+<p>The official pricing page lists cache storage as temporarily free and Web Search at $0.01 per use. FlashX is paid at a higher rate; its advertised speed of up to 200 tokens per second is a vendor claim rather than a guaranteed response latency. <a class="cite" href="#src-S08" aria-label="Source S08">[S08]</a>, <a class="cite" href="#src-S04" aria-label="Source S04">[S04]</a></p>
+<p>For 100K uncached input tokens and 20K output tokens, the listed rates imply $0.025 for Flash, $0.062 for FlashX, and $0.228 for flagship 5.3. These are calculations, excluding tools and retries. If input contains cached tokens, separate the cached and uncached portions. Include all billable generated tokens rather than counting only the visible answer.</p>
+<p>Cheap token prices do not guarantee cheap completed work. Track <code>total spend / accepted tasks</code>, elapsed time, and correction effort. Flash at two attempts may still be cheaper than flagship at one, but six attempts plus human repair may erase the benefit.</p>
+<h3>Coding Plan snapshot</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Five-hour credits</th>
+<th>Weekly credits</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lite</td>
+<td>2,000</td>
+<td>10,000</td>
+</tr>
+<tr>
+<td>Pro</td>
+<td>12,000</td>
+<td>60,000</td>
+</tr>
+<tr>
+<td>Max</td>
+<td>28,000</td>
+<td>140,000</td>
+</tr>
+</tbody></table></div>
+<p>The current formula is weighted tokens divided by 10,000. For 5.3, input/cached-input/output multipliers are 6.9/1.7/24; for Flash they are 2.3/0.56/8. Off-peak model usage costs half the credits. Documented peak time is Monday-Friday 14:00-18:00 Singapore time. The published token allowances assume very high cache-hit rates; they are not unconditional grants of that many tokens. Source: <a class="cite" href="#src-S09" aria-label="Source S09">[S09]</a>.</p>
+<p>Using the same 100K-input/20K-output example with no cache gives 117 peak credits for flagship and 39 for Flash; off-peak would be 58.5 and 19.5. This calculation demonstrates the roughly threefold quota advantage. Actual multi-turn tasks repeatedly send context and can consume much more.</p>
+<p>Z.ai advertises plans starting at $18 a month. The April migration notice includes historical tier-price examples and special eligibility discounts; those are not a reliable current checkout quote for everyone. Verify your account&#39;s price and term. The Flash guide says FlashX is not yet part of the Coding Plan. <a class="cite" href="#src-S09" aria-label="Source S09">[S09]</a>, <a class="cite" href="#src-S11" aria-label="Source S11">[S11]</a>, <a class="cite" href="#src-S04" aria-label="Source S04">[S04]</a></p>
+<p>The published usage policy prohibits sharing a personal subscription, restricts benefits to supported tools, describes dynamic concurrency, and states that purchases are not refundable. It instructs cancellation at least three days before renewal. These are provider policy statements as retrieved, not a determination of statutory consumer rights. <a class="cite" href="#src-S18" aria-label="Source S18">[S18]</a></p>
+<h3>Caching</h3>
+<p>Z.ai documents automatic reuse of repeated context and reports cached-token usage through <code>usage.prompt_tokens_details.cached_tokens</code>. Keep stable instructions and shared reference material consistent, then inspect the actual cache rate. Do not assume a cache hit because two prompts are conceptually similar. <a class="cite" href="#src-S19" aria-label="Source S19">[S19]</a></p>
+</section>
+<section id="privacy" data-search aria-labelledby="heading-privacy"><h2 id="heading-privacy">11 — Privacy licenses and limits</h2><h3>Hosted data handling</h3>
+<p>The published privacy policy distinguishes individual services from API business processing. Its API addendum states that prompt/output content is processed in real time and not stored on its servers; the policy describes data generally being processed in Singapore. Those are contractual statements, not infrastructure behavior independently audited here. They do not establish the behavior of another provider or of the application logging your requests. <a class="cite" href="#src-S20" aria-label="Source S20">[S20]</a></p>
+<p>The Terms of Use reserve broad rights over individual-user content and describe use for improving services. They state that enterprise/developer API content is not used to improve services unless the customer explicitly agrees. Do not transfer the API promise to consumer chat automatically. The precise category and terms applicable to a personal Coding Plan account should be confirmed before sensitive work. <a class="cite" href="#src-S21" aria-label="Source S21">[S21]</a></p>
+<p>For ordinary public material, test with a representative sample. For confidential work, determine which service terms cover your account and whether the tool, provider, or attached connectors retain content. Local inference reduces one external dependency but does not remove remote tools from the workflow.</p>
+<h3>Model licenses</h3>
+<p>GLM-5.3 uses a custom license granting broad use and modification rights, subject to its conditions. One provision requires a Z.ai security review for licensees or affiliates operating a Model as a Service business whose aggregate revenue exceeds $10 billion over consecutive 12 months. It is not simply the MIT license. GLM-5.3-Flash&#39;s inspected license is MIT, including notice obligations. Read the license shipped with your exact checkpoint and derivative. <a class="cite" href="#src-S22" aria-label="Source S22">[S22]</a>, <a class="cite" href="#src-S25" aria-label="Source S25">[S25]</a></p>
+<h3>Refusals and factual reliability</h3>
+<p>A Hugging Face 5.3 discussion reports benign-task refusals and incorrect self-identification. It is an anecdote, not a controlled refusal study. If your work involves sensitive topics, evaluate representative permitted tasks on the actual deployment. A model&#39;s training origin or license cannot alone establish its answer quality or behavior on every topic. <a class="cite" href="#src-S26" aria-label="Source S26">[S26]</a></p>
+<p>The guide does not substantiate claims of secret distillation from another model, deliberate quality degradation, uniform censorship behavior across every GLM deployment, or a universal superiority over Claude/GPT/Kimi/DeepSeek. Similar wording, a suspiciously good result, and a forum allegation are insufficient evidence.</p>
+</section>
+<section id="troubleshooting" data-search aria-labelledby="heading-troubleshooting"><h2 id="heading-troubleshooting">12 — Troubleshooting and a seven day trial</h2><h3>Diagnose the layer that failed</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>First checks</th>
+<th>Useful next action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Authentication failure</td>
+<td>Key belongs to endpoint; header/token present</td>
+<td>Correct credentials without exposing them in logs</td>
+</tr>
+<tr>
+<td>Unknown model</td>
+<td>Identifier, route, entitlement, tool suffix</td>
+<td>Try a documented current ID in a minimal call</td>
+</tr>
+<tr>
+<td>Invalid reasoning parameter</td>
+<td>API versus adapter behavior; forced thinking</td>
+<td>Use enabled thinking and low/high/max on direct API</td>
+</tr>
+<tr>
+<td>No final answer or truncated output</td>
+<td>Finish reason; output budget; reasoning usage</td>
+<td>Raise budget for a bounded task or lower effort</td>
+</tr>
+<tr>
+<td>429 response</td>
+<td>Business code and reset timestamp</td>
+<td>Distinguish quota exhaustion, request rate, and overload</td>
+</tr>
+<tr>
+<td>Very slow response</td>
+<td>Prefill, thinking time, tool waits, concurrency</td>
+<td>Try a shorter fresh task and measure each stage</td>
+</tr>
+<tr>
+<td>Garbled output or invented paths</td>
+<td>Long history, local quant, template, parser</td>
+<td>Reset context; test known-good runtime and basic task</td>
+</tr>
+<tr>
+<td>Tool calls appear as plain text</td>
+<td>Actual tool API, parser, call IDs</td>
+<td>Test one simple real tool round trip</td>
+</tr>
+<tr>
+<td>Attractive but broken interface</td>
+<td>Console and user-flow failures</td>
+<td>Run and verify the interaction, then fix the first error</td>
+</tr>
+<tr>
+<td>Images rejected</td>
+<td>Flagship versus Flash; interface support</td>
+<td>Use a vision-capable model and supported input format</td>
+</tr>
+</tbody></table></div>
+<p>The error reference distinguishes, among others, 1211 unknown model, 1214 invalid parameter, 1261 prompt too long, 1302 request rate limit, 1305 overload, and 1308/1310 usage limits. Inspect the inner code and message, not only HTTP status. <a class="cite" href="#src-S27" aria-label="Source S27">[S27]</a></p>
+<p>There is another documentation tension: the FAQ says plan exhaustion does not use account balance, while the error catalog includes codes for extra-usage balance and spend limits. Treat the actual account/product configuration as authoritative; do not infer automatic paid fallback from the existence of an error code. <a class="cite" href="#src-S10" aria-label="Source S10">[S10]</a>, <a class="cite" href="#src-S27" aria-label="Source S27">[S27]</a></p>
+<p>If quality appears to change, record provider, requested/returned model, time, agent version, reasoning effort, context size, quant, prompt, and logs. Repeat one fixed task in a fresh session. A reproducible comparison is more useful than asking whether the model has become dumber.</p>
+<h3>Seven day evaluation</h3>
+<p><strong>Day 1:</strong> Establish five tasks with objective acceptance criteria: a factual extraction, a bilingual writing task, a real bug fix, a bounded feature, and a visual/document task. Save the same inputs for every model.</p>
+<p><strong>Day 2:</strong> Run Flash using a sensible effort level. Record accepted output, retries, elapsed time, cost, and your correction time. Check citations and real execution.</p>
+<p><strong>Day 3:</strong> Run flagship 5.3 on the same tasks and effort conditions where applicable. Use equivalent tools and clean starting state. Repeat ambiguous outcomes rather than trusting one lucky result.</p>
+<p><strong>Day 4:</strong> Test one longer task with explicit milestone notes. Check whether instructions and verified facts survive context growth.</p>
+<p><strong>Day 5:</strong> If relevant, evaluate the local checkpoint on the same small tasks. Record quant and engine. Test tool calls independently of chat quality.</p>
+<p><strong>Day 6:</strong> Test during your normal work hours. Measure availability and first useful answer latency. For a subscription, verify both short-window and weekly quota behavior.</p>
+<p><strong>Day 7:</strong> Calculate cost per accepted task and human correction time. Choose a default model, an escalation model, and a stopping rule. Delay long commitments until the service has worked on your actual workload.</p>
+<p>Suggested stopping rule: after two unsuccessful repair rounds, require a concrete failing reproduction or switch approach. Tune that threshold to task complexity. Do not confuse a fixed number of retries with a guarantee of quality.</p>
+</section>
+<section id="prompts" data-search aria-labelledby="heading-prompts"><h2 id="heading-prompts">13 — Reusable prompts</h2><p>These prompts are original templates from this guide. Replace the bracketed fields and use them only in an environment that provides the required files and tools.</p>
+<h3>Repository orientation</h3>
+<blockquote>
+<p>Inspect this repository to explain [feature]. Identify the entry points, relevant files, data flow, and existing tests. Cite files you actually read. Distinguish verified facts from assumptions. Do not edit anything yet. Finish with a short implementation plan and the three most important uncertainties.</p>
+</blockquote>
+<h3>Bug fix</h3>
+<blockquote>
+<p>Reproduce [failure] using [input or steps]. Expected behavior is [result]. Find the first incorrect assumption in the execution path. Make the smallest appropriate fix using existing conventions. Run a check that demonstrates the failure before and success after when practical. Report changed files, exact checks run, and anything you could not verify.</p>
+</blockquote>
+<h3>Bounded feature</h3>
+<blockquote>
+<p>Implement [feature] within [scope]. Acceptance criteria are [list]. Read two comparable implementations before editing. Work in milestones. After each milestone, run the relevant checks and update a short task note. Deliver a working result, a concise explanation of behavior, and any remaining gaps.</p>
+</blockquote>
+<h3>Visual implementation with Flash</h3>
+<blockquote>
+<p>Use these screenshots and [design rules] to build [page or feature]. First identify shared components and interaction states. Implement it, run it, and inspect the actual rendered result at [viewports] if browser tools are available. Test [flows]. Explain visual differences and functional failures separately. Do not claim inspection if you could not perform it.</p>
+</blockquote>
+<h3>Evidence based research</h3>
+<blockquote>
+<p>Research [question] as of [date]. Read primary sources and relevant firsthand reports. For each important claim, include its URL, date, and evidence type. Distinguish full-page reads from snippets and promotional claims from measured results. Open links before citing them. Explain disagreements and access gaps. Do not invent missing sources or figures.</p>
+</blockquote>
+<h3>Extraction and translation</h3>
+<blockquote>
+<p>Extract [fields] from the supplied document. Return one record per [unit], with a page or paragraph reference for each value. Use null for missing information. Preserve exact numbers and dates. Then translate [passage] for [audience], using [glossary]. List ambiguous terminology instead of silently choosing a meaning.</p>
+</blockquote>
+<h3>Review a completed change</h3>
+<blockquote>
+<p>Review this diff against [acceptance criteria]. Trace each changed behavior through its callers and data dependencies. Report only actionable defects with evidence and a reproduction or failing condition. Check whether the tests establish the intended behavior. Do not treat the implementation&#39;s own explanation as proof that it works.</p>
+</blockquote>
+<h3>Recover a drifting session</h3>
+<blockquote>
+<p>Pause implementation and audit the current state. Read the task note and relevant files. List the goal, verified facts, completed work, failing check, and next diagnostic. Remove unsupported assumptions from the plan. If the same fix failed twice, explain what new evidence will make the next attempt different.</p>
+</blockquote>
+</section>
+<section id="claims" data-search aria-labelledby="heading-claims"><h2 id="heading-claims">14 — Claims to verify before committing</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Claim you may encounter</th>
+<th>Better question</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Opus-level or frontier-level</td>
+<td>On which benchmark, task, version, and effort budget?</td>
+</tr>
+<tr>
+<td>50% better coding</td>
+<td>Is this the private Code Bench relative gain?</td>
+</tr>
+<tr>
+<td>Flash is tiny</td>
+<td>How large is the exact checkpoint and runtime state?</td>
+</tr>
+<tr>
+<td>1M context</td>
+<td>Does this provider and tool enable it, and how well does retrieval work?</td>
+</tr>
+<tr>
+<td>200 tokens per second</td>
+<td>Which endpoint, load, first-answer latency, and task duration?</td>
+</tr>
+<tr>
+<td>Free or unlimited</td>
+<td>Which model, campaign, supported use, and quota cycle?</td>
+</tr>
+<tr>
+<td>80% quality retained by a quant</td>
+<td>Is that token agreement or downstream task success?</td>
+</tr>
+<tr>
+<td>Zero retention</td>
+<td>Which contract, provider, account category, and connected tools?</td>
+</tr>
+<tr>
+<td>The model got worse</td>
+<td>Can the same clean task reproduce it under controlled conditions?</td>
+</tr>
+</tbody></table></div>
+<p>A useful GLM setup is one that completes your work reliably at an acceptable total cost. Keep a small evaluation set, preserve working configuration details, and revisit the decision when the model, provider, or quota terms change.</p>
+</section>
+<section id="sources" data-search aria-labelledby="heading-sources"><h2 id="heading-sources">15 — Source register and access notes</h2><p>All sources below were checked or attempted on October 12, 2026. A source marked partial was inspected through indexed material or metadata rather than a complete source read. A listing here is not an endorsement. Live pages can change after this research date. Duplicate reposts were not counted as independent corroboration.</p>
+<h3>Official specifications and integration</h3>
+<ul>
+<li id="src-S01"><strong>S01</strong> <a href="https://huggingface.co/zai-org">Z.ai official model organization</a>. Publisher listing; read. Family links and model inventory.</li>
+<li id="src-S02"><strong>S02</strong> <a href="https://docs.z.ai/guides/overview/overview">Z.ai model overview</a>. Official; read. Current model/context map.</li>
+<li id="src-S03"><strong>S03</strong> <a href="https://docs.z.ai/guides/llm/glm-5.3">GLM-5.3 guide</a>. Official; read. Inputs, reasoning, benchmarks, and endpoint examples.</li>
+<li id="src-S04"><strong>S04</strong> <a href="https://docs.z.ai/guides/vlm/glm-5.3-flash">GLM-5.3-Flash and FlashX guide</a>. Official; read. Multimodality, settings, and plan availability.</li>
+<li id="src-S05"><strong>S05</strong> <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">GLM-5.3-Flash model card</a>. Publisher; read. Architecture and local framework links.</li>
+<li id="src-S06"><strong>S06</strong> <a href="https://huggingface.co/zai-org/GLM-5.3">GLM-5.3 model card</a>. Publisher; read. Benchmark conditions and chat-template notes.</li>
+<li id="src-S07"><strong>S07</strong> <a href="https://huggingface.co/zai-org/GLM-4.7-Flash/raw/main/README.md">GLM-4.7-Flash README</a>. Publisher; read. 30B-A3B specification and deployment details.</li>
+<li id="src-S08"><strong>S08</strong> <a href="https://docs.z.ai/guides/overview/pricing">Z.ai pricing</a>. Official; read. USD API snapshot; temporary offers can expire.</li>
+<li id="src-S09"><strong>S09</strong> <a href="https://docs.z.ai/devpack/overview">Coding Plan overview</a>. Official; read. Alias routing, credits, multipliers, and peak hours.</li>
+<li id="src-S10"><strong>S10</strong> <a href="https://docs.z.ai/devpack/faq">Coding Plan FAQ</a>. Official; read. Shared quota, eligibility, and exhaustion behavior.</li>
+<li id="src-S11"><strong>S11</strong> <a href="https://docs.z.ai/devpack/transition">Legacy plan migration</a>. Official, April 21, 2026; read. Historical examples and migration rules.</li>
+<li id="src-S12"><strong>S12</strong> <a href="https://docs.z.ai/devpack/tool/others">Supported tools and endpoints</a>. Official; read. Integration scope; some examples lag current models.</li>
+<li id="src-S13"><strong>S13</strong> <a href="https://docs.z.ai/devpack/latest-model">Switch models</a>. Official; read. Current 5.3/Flash tool settings and 1M configuration.</li>
+<li id="src-S14"><strong>S14</strong> <a href="https://docs.z.ai/guides/capabilities/thinking">Deep Thinking</a>. Official; read. Direct API and adapter effort behavior.</li>
+<li id="src-S15"><strong>S15</strong> <a href="https://docs.z.ai/guides/capabilities/thinking-mode">Thinking modes</a>. Official; read. Preserved reasoning and tool-chain requirements.</li>
+<li id="src-S16"><strong>S16</strong> <a href="https://docs.z.ai/guides/capabilities/function-calling">Function calling</a>. Official; read. Tool response contract.</li>
+<li id="src-S17"><strong>S17</strong> <a href="https://docs.z.ai/guides/capabilities/struct-output">Structured output</a>. Official; read. JSON mode and validation examples.</li>
+<li id="src-S18"><strong>S18</strong> <a href="https://docs.z.ai/devpack/usage-policy">Coding Plan usage policy</a>. Official; read. Supported use, concurrency, cancellation, refunds.</li>
+<li id="src-S19"><strong>S19</strong> <a href="https://docs.z.ai/guides/capabilities/cache">Context caching</a>. Official; read. Implicit caching and usage fields.</li>
+<li id="src-S20"><strong>S20</strong> <a href="https://docs.z.ai/legal-agreement/privacy-policy">Privacy policy and API addendum</a>. Official, page updated September 29, 2025; read relevant provisions.</li>
+<li id="src-S21"><strong>S21</strong> <a href="https://docs.z.ai/legal-agreement/terms-of-use">Terms of Use</a>. Official; read relevant content rights and API provisions.</li>
+<li id="src-S22"><strong>S22</strong> <a href="https://huggingface.co/zai-org/GLM-5.3/raw/main/LICENSE">GLM-5.3 license</a>. Actual license text; read.</li>
+<li id="src-S25"><strong>S25</strong> <a href="https://huggingface.co/zai-org/GLM-5.3-Flash/raw/main/LICENSE">GLM-5.3-Flash license</a>. Actual MIT text; read.</li>
+<li id="src-S27"><strong>S27</strong> <a href="https://docs.z.ai/api-reference/api-code">API error reference</a>. Official; read. Status and business-code distinctions.</li>
+<li id="src-S55"><strong>S55</strong> <a href="https://github.com/zai-org/GLM-5/blob/main/README.md">GLM-5 family GitHub README</a>. Publisher; read indexed README. Current model family and benchmark table.</li>
+<li id="src-S56"><strong>S56</strong> <a href="https://docs.z.ai/guides/develop/http/introduction">HTTP API integration</a>. Official; read. Standard endpoint, authentication, and request examples.</li>
+<li id="src-S57"><strong>S57</strong> <a href="https://docs.z.ai/api-reference/llm/chat-completion">Chat Completion API reference</a>. Official; read relevant model, message, and request parameters.</li>
+</ul>
+<h3>Deployment and external evaluations</h3>
+<ul>
+<li id="src-S23"><strong>S23</strong> <a href="https://unsloth.ai/docs/models/glm-5.3">Unsloth flagship local guide</a>. Maintainer documentation; read. Quant sizes, memory estimates, and template guidance.</li>
+<li id="src-S24"><strong>S24</strong> <a href="https://unsloth.ai/docs/models/glm-5.3-flash.md">Unsloth Flash local guide</a>. Maintainer documentation; read. Updated optimizations and exact quant table.</li>
+<li id="src-S26"><strong>S26</strong> <a href="https://huggingface.co/zai-org/GLM-5.3/discussions/10">Hugging Face refusal discussion</a>. User discussion, August-September; read indexed post. Anecdotal.</li>
+<li id="src-S30"><strong>S30</strong> <a href="https://artificialanalysis.ai/models/comparisons/glm-5-3-vs-minimax-m3">Artificial Analysis flagship comparison</a>. Evaluator&#39;s published current data; read. Max setting; numbers are version-dependent.</li>
+<li id="src-S31"><strong>S31</strong> <a href="https://artificialanalysis.ai/models/comparisons/glm-5-3-flash-vs-command-a-plus">Artificial Analysis Flash comparison</a>. Evaluator&#39;s published data; read. Capability, token use, and timing.</li>
+<li id="src-S32"><strong>S32</strong> <a href="https://blogs.nonelinear.com.cn/blog/nonelinear-glm-5-3-flash-coding-multimodal-model-132459d6d262">NoneLinear Flash ReLE evaluation</a>. September 3; read. Chinese evaluation published by a commercial API business.</li>
+<li id="src-S45"><strong>S45</strong> <a href="https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capabilities">Anthropic cyber evaluation</a>. September 29; read indexed article. Firsthand evaluator, competing model developer.</li>
+</ul>
+<h3>Reddit and English forums</h3>
+<ul>
+<li id="src-S33"><strong>S33</strong> <a href="https://www.reddit.com/r/ZaiGLM/comments/1wyesun/were_using_glm53_flash_instead_of_frontier_models/">Flash in a large production codebase</a>. Indexed in early October; post and available comments read. Positive firsthand claim.</li>
+<li id="src-S34"><strong>S34</strong> <a href="https://www.reddit.com/r/ZaiGLM/comments/1wyl4do/unhappy_with_glm_53_flash_now/">Unhappy with Flash now</a>. Indexed in early October; post and available comments read. Mixed reports; dates displayed inconsistently between index and live page.</li>
+<li id="src-S35"><strong>S35</strong> <a href="https://www.reddit.com/r/LocalLLaMA/comments/1w1qp10/is_anyone_successfully_running_glm_53_flash/">Running Flash locally</a>. August 29; post and comments read. Early runtime experience.</li>
+<li id="src-S46"><strong>S46</strong> <a href="https://www.reddit.com/r/LocalLLaMA/comments/1rwhe5j/i_just_realised_how_good_glm_5_is/">GLM-5 coding comparison</a>. March 17; indexed post read. Historical small-app comparison.</li>
+<li id="src-S47"><strong>S47</strong> <a href="https://www.reddit.com/r/ZaiGLM/comments/1s2xb1k/dont_buy_glm_coding_plans_quality_is_atrocious/">Coding Plan quality complaint</a>. March 25; indexed post/comments read. Historical service complaint.</li>
+<li id="src-S52"><strong>S52</strong> <a href="https://news.ycombinator.com/item?id=49479878">Hacker News open-weight discussion</a>. Public thread retrieved; supplemental discussion of licensing and local economics, not used as a specification authority.</li>
+</ul>
+<h3>YouTube and creator write-ups</h3>
+<ul>
+<li id="src-S36"><strong>S36</strong> <a href="https://www.youtube.com/watch?v=ZoBfQZ5utQk">Claire Vo GLM-5.2 video</a>. June 24; full English auto-generated transcript retrieved and read. Captions sometimes misrecognize model and product names; checked against creator article.</li>
+<li id="src-S37"><strong>S37</strong> <a href="https://www.chatprd.ai/how-i-ai/glm-5-2-review-open-weights-model">Claire Vo creator article</a>. June 24; read. Same experiment as S36, not separate corroboration; episode sponsorship disclosed.</li>
+<li id="src-S38"><strong>S38</strong> <a href="https://www.hijoseromero.com/posts/glm-53-flash-first-look">Jose Romero local Flash test</a>. August 28 and September 4 test runs; creator article read. Linked video/results; affiliate hardware links disclosed.</li>
+<li id="src-S41"><strong>S41</strong> <a href="https://www.youtube.com/watch?v=3TeW8L9wy-Y">Bijan Bowen GLM-5.3 video</a>. August 16 per repost; original page verified in browser, transcript unavailable. Secondary description used only with qualification.</li>
+<li id="src-S53"><strong>S53</strong> <a href="https://www.youtube.com/watch?v=NUJ3ffYR1sQ">Fahd Mirza flagship review</a>. Original title/page verified; transcript unavailable. Review discovery only, no independently verified test results used.</li>
+<li id="src-S54"><strong>S54</strong> <a href="https://www.youtube.com/watch?v=vSt0c-vzWp4">Fahd Mirza Flash review</a>. August 26 per indexed description; original title/page verified, transcript unavailable. Description includes GPU-rental promotion; no result scored here.</li>
+</ul>
+<h3>Chinese forums video and social sources</h3>
+<ul>
+<li id="src-S39"><strong>S39</strong> <a href="https://linux.do/t/topic/2754572">LINUX DO practical 5.3 report</a>. August 14; thread read. CV training bug and large C++ review anecdotes.</li>
+<li id="src-S42"><strong>S42</strong> <a href="https://linux.do/t/topic/2755294">LINUX DO front-end versus logic review</a>. August 14; thread read. Strong visuals, rework, dissenting replies.</li>
+<li id="src-S43"><strong>S43</strong> <a href="https://linux.do/t/topic/2976037">LINUX DO Flash actual quality</a>. October 1; thread read. Paths, URLs, context, latency, and mixed quality.</li>
+<li id="src-S44"><strong>S44</strong> <a href="https://linux.do/t/topic/2983953">LINUX DO perceived quality decline</a>. October 5; thread read. Allegations and conflicting replies.</li>
+<li id="src-S48"><strong>S48</strong> <a href="https://www.v2ex.com/t/1234400">V2EX subscription speed discussion</a>. August 14; available replies read. Some reply bodies omitted by extraction.</li>
+<li id="src-S49"><strong>S49</strong> <a href="https://www.bilibili.com/video/BV1rv8o66Ems/">Bilibili native Flash trial</a>. August 27; indexed description read. Three directions, explicitly subjective; footage not reviewed.</li>
+<li id="src-S40"><strong>S40</strong> <a href="https://www.bilibili.com/video/BV1Kgb96TEJ7/">Bilibili Bijan Bowen repost</a>. August 16; indexed description and chapter list read. Translation/repost, not an independent test.</li>
+<li id="src-S50"><strong>S50</strong> <a href="https://zhuanlan.zhihu.com/p/2073427497862042038">Zhihu 5.3 launch framing</a>. August launch period; indexed extract read, direct open timed out. Partial access.</li>
+<li id="src-S51"><strong>S51</strong> <a href="https://weibo.com/2/detail/5344570766263720">Weibo FlashX post</a>. September 18; public post read. Promotional framing; inconsistent price claims excluded.</li>
+</ul>
+<h3>Coverage gaps and unresolved questions</h3>
+<p>Xiaohongshu and WeChat public-index searches did not yield sufficiently accessible posts for reliable synthesis. Zhihu coverage is partial. Bilibili coverage is descriptions and chapters, not a frame-by-frame review. The research does not establish uptime statistics, a standardized GLM hallucination rate, current checkout prices for every account/region, the exact hosted precision at every provider, or downstream quality retention for every local quant. No GLM API benchmark, hardware installation, purchase, or subscription change was performed for this guide.</p>
+</section></main></div>
+<footer class="footer"><strong>GLM FIELD GUIDE / 2026 EDITION</strong><p class="small">Created for William Lodge. Independent educational guide; not affiliated with Zhipu or Z.ai. Research checked October 12, 2026. Prices and model availability can change.</p><p class="small">Presentation adapted from <a href="https://williamlodge.github.io/termux-field-guide/">Termux Field Guide</a> by William Lodge, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Adaptation changes the subject, content, navigation, accessibility, and search/copy behavior.</p></footer><script>(()=>{
+  const sidebar=document.getElementById('sidebar'),menu=document.getElementById('menuBtn'),overlay=document.getElementById('menuOverlay');
+  const setMenu=open=>{sidebar.classList.toggle('open',open);overlay.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));};
+  menu.addEventListener('click',()=>setMenu(!sidebar.classList.contains('open')));
+  overlay.addEventListener('click',()=>setMenu(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){setMenu(false);if(document.activeElement===search){search.value='';filter();}}});
+  sidebar.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{search.value='';filter();setMenu(false);}));
+  document.querySelectorAll('pre,blockquote').forEach((box,i)=>{
+    const button=document.createElement('button');button.className='copy';button.type='button';button.textContent='COPY';button.setAttribute('aria-label',box.tagName==='PRE'?'Copy code':'Copy prompt');
+    const original=box.querySelector('code')?.textContent||box.textContent;
+    button.addEventListener('click',async()=>{
+      try {if(!navigator.clipboard?.writeText)throw Error('Clipboard unavailable');await navigator.clipboard.writeText(original.trim());button.textContent='COPIED';}
+      catch {const range=document.createRange();range.selectNodeContents(box.querySelector('code')||box.querySelector('p')||box);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);button.textContent='SELECTED';}
+      setTimeout(()=>button.textContent='COPY',1400);
+    });box.appendChild(button);
+  });
+  const search=document.getElementById('search'),status=document.getElementById('searchStatus'),sections=[...document.querySelectorAll('[data-search]')],links=[...sidebar.querySelectorAll('a')];
+  function filter(){
+    const query=search.value.trim().toLowerCase(),words=query.split(/\s+/).filter(Boolean);let count=0;
+    sections.forEach(section=>{const text=section.textContent.toLowerCase();const hit=words.every(word=>text.includes(word));section.classList.toggle('hidden-by-search',!hit);if(hit)count++;const link=links.find(a=>a.hash==='#'+section.id);if(link)link.hidden=!hit;});
+    status.hidden=!query;status.textContent=query?count+' of '+sections.length+' sections match “'+search.value.trim()+'”':'';
+    document.getElementById('no-results').hidden=count>0;document.getElementById('hero').hidden=Boolean(query);
+  }
+  search.addEventListener('input',filter);
+  document.querySelectorAll('a.cite').forEach(a=>a.addEventListener('click',()=>{search.value='';filter();}));
+  document.getElementById('printBtn').addEventListener('click',()=>window.print());
+  const online=document.getElementById('online');const updateOnline=()=>online.textContent=navigator.onLine?'ONLINE':'OFFLINE';window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline();
+  if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){links.forEach(a=>{const current=a.hash==='#'+entry.target.id;a.classList.toggle('active',current);if(current)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});}},{rootMargin:'-12% 0px -70% 0px'});sections.forEach(s=>observer.observe(s));}
+})();</script></body></html>

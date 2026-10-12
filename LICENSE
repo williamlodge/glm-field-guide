@@ -1,0 +1,18 @@
+GLM Field Guide presentation
+
+Adapted from Termux Field Guide by William Lodge (2026).
+Reference: https://williamlodge.github.io/termux-field-guide/
+Original source: https://github.com/williamlodge/termux-field-guide
+
+The original presentation and this adapted presentation are licensed under the
+Creative Commons Attribution 4.0 International License (CC BY 4.0).
+
+Changes: GLM-specific content and navigation, improved mobile header, accessible
+controls, section search, prompt copying, and print layout.
+
+License: https://creativecommons.org/licenses/by/4.0/
+Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+This notice does not relicense linked third-party material, model weights,
+trademarks, or source documentation. Their original terms continue to apply.
+
